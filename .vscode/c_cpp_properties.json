@@ -1,0 +1,309 @@
+{
+  "version": 4,
+  "configurations": [
+    {
+      "name": "Nachos Threads",
+      "compilerPath": "/usr/bin/g++",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerArgs": [
+        "-m32"
+      ],
+      "cStandard": "c17",
+      "cppStandard": "gnu++17",
+      "includePath": [
+        "${workspaceFolder}/machine",
+        "${workspaceFolder}/threads"
+      ],
+      "defines": [
+        "CHANGED",
+        "HOST_LINUX",
+        "HOST_i386",
+        "THREADS"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/machine",
+          "${workspaceFolder}/threads"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    },
+    {
+      "name": "Nachos Lab2",
+      "compilerPath": "/usr/bin/g++",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerArgs": [
+        "-m32"
+      ],
+      "cStandard": "c17",
+      "cppStandard": "gnu++17",
+      "includePath": [
+        "${workspaceFolder}/lab2",
+        "${workspaceFolder}/machine",
+        "${workspaceFolder}/threads"
+      ],
+      "defines": [
+        "CHANGED",
+        "HOST_LINUX",
+        "HOST_i386",
+        "THREADS"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/lab2",
+          "${workspaceFolder}/machine",
+          "${workspaceFolder}/threads"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    },
+    {
+      "name": "Nachos Lab3",
+      "compilerPath": "/usr/bin/g++",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerArgs": [
+        "-m32"
+      ],
+      "cStandard": "c17",
+      "cppStandard": "gnu++17",
+      "includePath": [
+        "${workspaceFolder}/machine",
+        "${workspaceFolder}/threads"
+      ],
+      "defines": [
+        "CHANGED",
+        "HOST_LINUX",
+        "HOST_i386",
+        "THREADS"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/machine",
+          "${workspaceFolder}/threads"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    },
+    {
+      "name": "Nachos Filesys",
+      "compilerPath": "/usr/bin/g++",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerArgs": [
+        "-m32"
+      ],
+      "cStandard": "c17",
+      "cppStandard": "gnu++17",
+      "includePath": [
+        "${workspaceFolder}/filesys",
+        "${workspaceFolder}/machine",
+        "${workspaceFolder}/threads",
+        "${workspaceFolder}/userprog"
+      ],
+      "defines": [
+        "CHANGED",
+        "FILESYS",
+        "FILESYS_NEEDED",
+        "HOST_LINUX",
+        "HOST_i386",
+        "THREADS"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/filesys",
+          "${workspaceFolder}/machine",
+          "${workspaceFolder}/threads",
+          "${workspaceFolder}/userprog"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    },
+    {
+      "name": "Nachos Lab5",
+      "compilerPath": "/usr/bin/g++",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerArgs": [
+        "-m32"
+      ],
+      "cStandard": "c17",
+      "cppStandard": "gnu++17",
+      "includePath": [
+        "${workspaceFolder}/filesys",
+        "${workspaceFolder}/lab5",
+        "${workspaceFolder}/machine",
+        "${workspaceFolder}/threads",
+        "${workspaceFolder}/userprog"
+      ],
+      "defines": [
+        "CHANGED",
+        "FILESYS",
+        "FILESYS_NEEDED",
+        "HOST_LINUX",
+        "HOST_i386",
+        "THREADS"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/filesys",
+          "${workspaceFolder}/lab5",
+          "${workspaceFolder}/machine",
+          "${workspaceFolder}/threads",
+          "${workspaceFolder}/userprog"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    },
+    {
+      "name": "Nachos Userprog",
+      "compilerPath": "/usr/bin/g++",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerArgs": [
+        "-m32"
+      ],
+      "cStandard": "c17",
+      "cppStandard": "gnu++17",
+      "includePath": [
+        "${workspaceFolder}/bin",
+        "${workspaceFolder}/filesys",
+        "${workspaceFolder}/machine",
+        "${workspaceFolder}/threads",
+        "${workspaceFolder}/userprog"
+      ],
+      "defines": [
+        "CHANGED",
+        "FILESYS_NEEDED",
+        "FILESYS_STUB",
+        "HOST_LINUX",
+        "HOST_i386",
+        "THREADS",
+        "USER_PROGRAM"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/bin",
+          "${workspaceFolder}/filesys",
+          "${workspaceFolder}/machine",
+          "${workspaceFolder}/threads",
+          "${workspaceFolder}/userprog"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    },
+    {
+      "name": "Nachos Lab6",
+      "compilerPath": "/usr/bin/g++",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerArgs": [
+        "-m32"
+      ],
+      "cStandard": "c17",
+      "cppStandard": "gnu++17",
+      "includePath": [
+        "${workspaceFolder}/bin",
+        "${workspaceFolder}/filesys",
+        "${workspaceFolder}/lab6",
+        "${workspaceFolder}/machine",
+        "${workspaceFolder}/threads",
+        "${workspaceFolder}/userprog"
+      ],
+      "defines": [
+        "CHANGED",
+        "FILESYS_NEEDED",
+        "FILESYS_STUB",
+        "HOST_LINUX",
+        "HOST_i386",
+        "THREADS",
+        "USER_PROGRAM"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/bin",
+          "${workspaceFolder}/filesys",
+          "${workspaceFolder}/lab6",
+          "${workspaceFolder}/machine",
+          "${workspaceFolder}/threads",
+          "${workspaceFolder}/userprog"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    },
+    {
+      "name": "Nachos Lab7-8",
+      "compilerPath": "/usr/bin/g++",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerArgs": [
+        "-m32"
+      ],
+      "cStandard": "c17",
+      "cppStandard": "gnu++17",
+      "includePath": [
+        "${workspaceFolder}/bin",
+        "${workspaceFolder}/filesys",
+        "${workspaceFolder}/machine",
+        "${workspaceFolder}/threads",
+        "${workspaceFolder}/userprog"
+      ],
+      "defines": [
+        "CHANGED",
+        "FILESYS_NEEDED",
+        "FILESYS_STUB",
+        "HOST_LINUX",
+        "HOST_i386",
+        "THREADS",
+        "USER_PROGRAM"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/bin",
+          "${workspaceFolder}/filesys",
+          "${workspaceFolder}/machine",
+          "${workspaceFolder}/threads",
+          "${workspaceFolder}/userprog"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    },
+    {
+      "name": "Nachos Network",
+      "compilerPath": "/usr/bin/g++",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerArgs": [
+        "-m32"
+      ],
+      "cStandard": "c17",
+      "cppStandard": "gnu++17",
+      "includePath": [
+        "${workspaceFolder}/bin",
+        "${workspaceFolder}/filesys",
+        "${workspaceFolder}/machine",
+        "${workspaceFolder}/network",
+        "${workspaceFolder}/threads",
+        "${workspaceFolder}/userprog",
+        "${workspaceFolder}/vm"
+      ],
+      "defines": [
+        "CHANGED",
+        "FILESYS",
+        "FILESYS_NEEDED",
+        "HOST_LINUX",
+        "HOST_i386",
+        "NETWORK",
+        "THREADS",
+        "USER_PROGRAM",
+        "USE_TLB",
+        "VM"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/bin",
+          "${workspaceFolder}/filesys",
+          "${workspaceFolder}/machine",
+          "${workspaceFolder}/network",
+          "${workspaceFolder}/threads",
+          "${workspaceFolder}/userprog",
+          "${workspaceFolder}/vm"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    }
+  ]
+}
