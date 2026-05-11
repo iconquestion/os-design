@@ -40,6 +40,9 @@ Thread::Thread(char* threadName)
     status = JUST_CREATED;
 #ifdef USER_PROGRAM
     space = NULL;
+    processId = 0;
+    parentProcessId = -1;
+    exitStatus = 0;
 #endif
 }
 
