@@ -21,13 +21,12 @@
 //	purposes.
 //----------------------------------------------------------------------
 
-void SimpleThread(_int which)
-{
+void
+SimpleThread(_int which) {
     int num;
     printf("simple thread started!!!\n");
 
-    for (num = 0; num < 5; num++)
-    {
+    for (num = 0; num < 5; num++) {
         printf("*** thread %d looped %d times\n", (int)which, num);
         currentThread->Yield();
     }
@@ -41,8 +40,8 @@ void SimpleThread(_int which)
 //	to call SimpleThread, and then calling SimpleThread ourselves.
 //----------------------------------------------------------------------
 
-void ThreadTest()
-{
+void
+ThreadTest() {
     DEBUG('t', "Entering SimpleTest");
 
     Thread *t = new Thread("forked thread");

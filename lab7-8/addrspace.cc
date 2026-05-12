@@ -31,8 +31,7 @@ static BitMap freeFrameMap(NumPhysPages);
 //----------------------------------------------------------------------
 
 static void
-SwapHeader(NoffHeader *noffH)
-{
+SwapHeader(NoffHeader *noffH) {
     noffH->noffMagic = WordToHost(noffH->noffMagic);
     noffH->code.size = WordToHost(noffH->code.size);
     noffH->code.virtualAddr = WordToHost(noffH->code.virtualAddr);
@@ -46,8 +45,7 @@ SwapHeader(NoffHeader *noffH)
 }
 
 static unsigned int
-GetExecutableNumPages(OpenFile *executable)
-{
+GetExecutableNumPages(OpenFile *executable) {
     NoffHeader noffH;
 
     executable->ReadAt((char *)&noffH, sizeof(noffH), 0);
@@ -76,8 +74,7 @@ GetExecutableNumPages(OpenFile *executable)
 //	"executable" is the file containing the object code to load into memory
 //----------------------------------------------------------------------
 
-AddrSpace::AddrSpace(OpenFile *executable)
-{
+AddrSpace::AddrSpace(OpenFile *executable) {
     NoffHeader noffH;
     unsigned int i, size;
 
@@ -88,21 +85,21 @@ AddrSpace::AddrSpace(OpenFile *executable)
     ASSERT(noffH.noffMagic == NOFFMAGIC);
 
     // how big is address space?
-    size = noffH.code.size + noffH.initData.size + noffH.uninitData.size + UserStackSize; // we need to increase the size
-                                                                                          // to leave room for the stack
+    size = noffH.code.size + noffH.initData.size + noffH.uninitData.size +
+           UserStackSize; // we need to increase the size
+                          // to leave room for the stack
     numPages = divRoundUp(size, PageSize);
     size = numPages * PageSize;
 
     IntStatus oldLevel = interrupt->SetLevel(IntOff);
     ASSERT(numPages <= (unsigned int)freeFrameMap.NumClear());
 
-    DEBUG('a', "Initializing address space, num pages %d, size %d\n",
-          numPages, size);
+    DEBUG('a', "Initializing address space, num pages %d, size %d\n", numPages,
+          size);
 
     // first, set up the translation
     pageTable = new TranslationEntry[numPages];
-    for (i = 0; i < numPages; i++)
-    {
+    for (i = 0; i < numPages; i++) {
         int frame = freeFrameMap.Find();
         ASSERT(frame >= 0);
 
@@ -120,15 +117,13 @@ AddrSpace::AddrSpace(OpenFile *executable)
     (void)interrupt->SetLevel(oldLevel);
 
     // then, copy in the code and data segments into memory
-    if (noffH.code.size > 0)
-    {
+    if (noffH.code.size > 0) {
         DEBUG('a', "Initializing code segment, at 0x%x, size %d\n",
               noffH.code.virtualAddr, noffH.code.size);
-        LoadSegment(executable, noffH.code.inFileAddr,
-                    noffH.code.virtualAddr, noffH.code.size);
+        LoadSegment(executable, noffH.code.inFileAddr, noffH.code.virtualAddr,
+                    noffH.code.size);
     }
-    if (noffH.initData.size > 0)
-    {
+    if (noffH.initData.size > 0) {
         DEBUG('a', "Initializing data segment, at 0x%x, size %d\n",
               noffH.initData.virtualAddr, noffH.initData.size);
         LoadSegment(executable, noffH.initData.inFileAddr,
@@ -137,14 +132,12 @@ AddrSpace::AddrSpace(OpenFile *executable)
 }
 
 unsigned int
-AddrSpace::RequiredPages(OpenFile *executable)
-{
+AddrSpace::RequiredPages(OpenFile *executable) {
     return GetExecutableNumPages(executable);
 }
 
 unsigned int
-AddrSpace::NumFreeFrames()
-{
+AddrSpace::NumFreeFrames() {
     IntStatus oldLevel = interrupt->SetLevel(IntOff);
     unsigned int count = freeFrameMap.NumClear();
     (void)interrupt->SetLevel(oldLevel);
@@ -156,13 +149,10 @@ AddrSpace::NumFreeFrames()
 // 	Deallocate an address space.
 //----------------------------------------------------------------------
 
-AddrSpace::~AddrSpace()
-{
+AddrSpace::~AddrSpace() {
     IntStatus oldLevel = interrupt->SetLevel(IntOff);
-    for (unsigned int i = 0; i < numPages; i++)
-    {
-        if (pageTable[i].valid)
-        {
+    for (unsigned int i = 0; i < numPages; i++) {
+        if (pageTable[i].valid) {
             freeFrameMap.Clear(pageTable[i].physicalPage);
         }
     }
@@ -172,13 +162,11 @@ AddrSpace::~AddrSpace()
 
 void
 AddrSpace::LoadSegment(OpenFile *executable, int fileAddr, int virtualAddr,
-                       int size)
-{
+                       int size) {
     char *buffer = new char[size];
     executable->ReadAt(buffer, size, fileAddr);
 
-    for (int i = 0; i < size; i++)
-    {
+    for (int i = 0; i < size; i++) {
         int vaddr = virtualAddr + i;
         int vpn = vaddr / PageSize;
         int offset = vaddr % PageSize;
@@ -201,8 +189,8 @@ AddrSpace::LoadSegment(OpenFile *executable, int fileAddr, int virtualAddr,
 //	when this thread is context switched out.
 //----------------------------------------------------------------------
 
-void AddrSpace::InitRegisters()
-{
+void
+AddrSpace::InitRegisters() {
     int i;
 
     for (i = 0; i < NumTotalRegs; i++)
@@ -228,15 +216,13 @@ void AddrSpace::InitRegisters()
 //----------------------------------------------------------------------
 
 void
-AddrSpace::Print()
-{
+AddrSpace::Print() {
     unsigned int i;
 
     printf("page table dump: %u pages in total\n", numPages);
     printf("=============================\n");
     printf("\tVirtPage,\tPhysPage\n");
-    for (i = 0; i < numPages; i++)
-    {
+    for (i = 0; i < numPages; i++) {
         printf("\t %u,\t\t%d\n", pageTable[i].virtualPage,
                pageTable[i].physicalPage);
     }
@@ -251,9 +237,8 @@ AddrSpace::Print()
 //	For now, nothing!
 //----------------------------------------------------------------------
 
-void AddrSpace::SaveState()
-{
-}
+void
+AddrSpace::SaveState() {}
 
 //----------------------------------------------------------------------
 // AddrSpace::RestoreState
@@ -263,8 +248,8 @@ void AddrSpace::SaveState()
 //      For now, tell the machine where to find the page table.
 //----------------------------------------------------------------------
 
-void AddrSpace::RestoreState()
-{
+void
+AddrSpace::RestoreState() {
     machine->pageTable = pageTable;
     machine->pageTableSize = numPages;
 }

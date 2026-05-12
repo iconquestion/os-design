@@ -24,8 +24,7 @@
 //	"sector" -- the location on disk of the file header for this file
 //----------------------------------------------------------------------
 
-OpenFile::OpenFile(int sector)
-{
+OpenFile::OpenFile(int sector) {
     hdr = new FileHeader;
     hdr->FetchFrom(sector);
     seekPosition = 0;
@@ -37,8 +36,7 @@ OpenFile::OpenFile(int sector)
 // 	Close a Nachos file, de-allocating any in-memory data structures.
 //----------------------------------------------------------------------
 
-OpenFile::~OpenFile()
-{
+OpenFile::~OpenFile() {
     delete hdr;
 }
 
@@ -50,8 +48,8 @@ OpenFile::~OpenFile()
 //	"position" -- the location within the file for the next Read/Write
 //----------------------------------------------------------------------
 
-void OpenFile::Seek(int position)
-{
+void
+OpenFile::Seek(int position) {
     seekPosition = position;
 }
 
@@ -68,15 +66,15 @@ void OpenFile::Seek(int position)
 //	"numBytes" -- the number of bytes to transfer
 //----------------------------------------------------------------------
 
-int OpenFile::Read(char *into, int numBytes)
-{
+int
+OpenFile::Read(char *into, int numBytes) {
     int result = ReadAt(into, numBytes, seekPosition);
     seekPosition += result;
     return result;
 }
 
-int OpenFile::Write(char *into, int numBytes)
-{
+int
+OpenFile::Write(char *into, int numBytes) {
     int result = WriteAt(into, numBytes, seekPosition);
     if (result > 0)
         seekPosition += result;
@@ -109,8 +107,8 @@ int OpenFile::Write(char *into, int numBytes)
 //			read/written
 //----------------------------------------------------------------------
 
-int OpenFile::ReadAt(char *into, int numBytes, int position)
-{
+int
+OpenFile::ReadAt(char *into, int numBytes, int position) {
     int fileLength = hdr->FileLength();
     int i, firstSector, lastSector, numSectors;
     char *buf;
@@ -119,8 +117,8 @@ int OpenFile::ReadAt(char *into, int numBytes, int position)
         return 0; // check request
     if ((position + numBytes) > fileLength)
         numBytes = fileLength - position;
-    DEBUG('f', "Reading %d bytes at %d, from file of length %d.\n",
-          numBytes, position, fileLength);
+    DEBUG('f', "Reading %d bytes at %d, from file of length %d.\n", numBytes,
+          position, fileLength);
 
     firstSector = divRoundDown(position, SectorSize);
     lastSector = divRoundDown(position + numBytes - 1, SectorSize);
@@ -138,8 +136,8 @@ int OpenFile::ReadAt(char *into, int numBytes, int position)
     return numBytes;
 }
 
-int OpenFile::WriteAt(char *from, int numBytes, int position)
-{
+int
+OpenFile::WriteAt(char *from, int numBytes, int position) {
     int fileLength = hdr->FileLength();
     int i, firstSector, lastSector, numSectors;
     char *buf;
@@ -163,8 +161,8 @@ int OpenFile::WriteAt(char *from, int numBytes, int position)
         delete freeMap;
     }
 
-    DEBUG('f', "Writing %d bytes at %d, from file of length %d.\n",
-          numBytes, position, hdr->FileLength());
+    DEBUG('f', "Writing %d bytes at %d, from file of length %d.\n", numBytes,
+          position, hdr->FileLength());
 
     firstSector = divRoundDown(position, SectorSize);
     lastSector = divRoundDown(position + numBytes - 1, SectorSize);
@@ -198,8 +196,8 @@ int OpenFile::WriteAt(char *from, int numBytes, int position)
 // 	Return the number of bytes in the file.
 //----------------------------------------------------------------------
 
-int OpenFile::Length()
-{
+int
+OpenFile::Length() {
     return hdr->FileLength();
 }
 
@@ -208,7 +206,7 @@ int OpenFile::Length()
 // 	Write the in-memory file header back to its disk sector.
 //----------------------------------------------------------------------
 
-void OpenFile::WriteBack()
-{
+void
+OpenFile::WriteBack() {
     hdr->WriteBack(hdrSector);
 }

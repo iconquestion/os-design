@@ -1,8 +1,7 @@
 #include "syscall.h"
 
 int
-main()
-{
+main() {
     Write("exit.c running\n", 15, ConsoleOutput);
     Exit(7);
 }

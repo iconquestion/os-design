@@ -31,21 +31,19 @@ static int nextSpaceId = 1;
 
 static void StartUserProcess(_int arg);
 
-static void AdvanceProgramCounter()
-{
+static void
+AdvanceProgramCounter() {
     int pc = machine->ReadRegister(PCReg);
     machine->WriteRegister(PrevPCReg, pc);
     machine->WriteRegister(PCReg, pc + 4);
     machine->WriteRegister(NextPCReg, pc + 8);
 }
 
-static void WriteToConsole(int userBufferAddr, int size)
-{
-    for (int i = 0; i < size; i++)
-    {
+static void
+WriteToConsole(int userBufferAddr, int size) {
+    for (int i = 0; i < size; i++) {
         int ch;
-        if (!machine->ReadMem(userBufferAddr + i, 1, &ch))
-        {
+        if (!machine->ReadMem(userBufferAddr + i, 1, &ch)) {
             return;
         }
         putchar(ch & 0xff);
@@ -53,22 +51,19 @@ static void WriteToConsole(int userBufferAddr, int size)
     fflush(stdout);
 }
 
-static char *CopyUserString(int userAddr)
-{
+static char *
+CopyUserString(int userAddr) {
     char *buffer = new char[kMaxUserStringLength];
     int ch = 0;
     int i;
 
-    for (i = 0; i < kMaxUserStringLength - 1; i++)
-    {
-        if (!machine->ReadMem(userAddr + i, 1, &ch))
-        {
+    for (i = 0; i < kMaxUserStringLength - 1; i++) {
+        if (!machine->ReadMem(userAddr + i, 1, &ch)) {
             delete[] buffer;
             return NULL;
         }
         buffer[i] = (char)(ch & 0xff);
-        if (buffer[i] == '\0')
-        {
+        if (buffer[i] == '\0') {
             return buffer;
         }
     }
@@ -77,14 +72,13 @@ static char *CopyUserString(int userAddr)
     return buffer;
 }
 
-static bool HasReadyThread()
-{
+static bool
+HasReadyThread() {
     IntStatus oldLevel = interrupt->SetLevel(IntOff);
     Thread *nextThread = scheduler->FindNextToRun();
     bool hasReadyThread = (nextThread != NULL);
 
-    if (nextThread != NULL)
-    {
+    if (nextThread != NULL) {
         scheduler->ReadyToRun(nextThread);
     }
 
@@ -92,36 +86,31 @@ static bool HasReadyThread()
     return hasReadyThread;
 }
 
-static void DoExit(int status)
-{
+static void
+DoExit(int status) {
     AddrSpace *space = currentThread->space;
 
-    printf("Process %s exiting with status %d\n",
-           currentThread->getName(), status);
+    printf("Process %s exiting with status %d\n", currentThread->getName(),
+           status);
 
     currentThread->space = NULL;
-    if (space != NULL)
-    {
+    if (space != NULL) {
         delete space;
     }
 
-    if (HasReadyThread())
-    {
+    if (HasReadyThread()) {
         currentThread->Finish();
-    }
-    else
-    {
+    } else {
         interrupt->Halt();
     }
 }
 
-static void StartUserProcess(_int arg)
-{
+static void
+StartUserProcess(_int arg) {
     char *filename = (char *)arg;
     OpenFile *executable = fileSystem->Open(filename);
 
-    if (executable == NULL)
-    {
+    if (executable == NULL) {
         printf("Unable to open file %s\n", filename);
         delete[] filename;
         DoExit(-1);
@@ -164,14 +153,12 @@ static void StartUserProcess(_int arg)
 //	are in machine.h.
 //----------------------------------------------------------------------
 
-void ExceptionHandler(ExceptionType which)
-{
+void
+ExceptionHandler(ExceptionType which) {
     int type = machine->ReadRegister(2);
 
-    if (which == SyscallException)
-    {
-        switch (type)
-        {
+    if (which == SyscallException) {
+        switch (type) {
         case SC_Halt:
             DEBUG('a', "Shutdown, initiated by user program.\n");
             interrupt->Halt();
@@ -179,16 +166,13 @@ void ExceptionHandler(ExceptionType which)
         case SC_Exit:
             DoExit(machine->ReadRegister(4));
             return;
-        case SC_Exec:
-        {
+        case SC_Exec: {
             char *filename = CopyUserString(machine->ReadRegister(4));
             Thread *childThread;
 
-            if (filename == NULL || filename[0] == '\0')
-            {
+            if (filename == NULL || filename[0] == '\0') {
                 machine->WriteRegister(2, -1);
-                if (filename != NULL)
-                {
+                if (filename != NULL) {
                     delete[] filename;
                 }
                 AdvanceProgramCounter();
@@ -203,13 +187,10 @@ void ExceptionHandler(ExceptionType which)
             return;
         }
         case SC_Write:
-            if (machine->ReadRegister(6) == ConsoleOutput)
-            {
+            if (machine->ReadRegister(6) == ConsoleOutput) {
                 WriteToConsole(machine->ReadRegister(4),
                                machine->ReadRegister(5));
-            }
-            else
-            {
+            } else {
                 printf("Unsupported Write target %d\n",
                        machine->ReadRegister(6));
             }

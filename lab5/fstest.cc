@@ -31,16 +31,15 @@
 //  ./nachos -cp Unix_file Nachos_file
 //----------------------------------------------------------------------
 
-void Copy(char *from, char *to)
-{
+void
+Copy(char *from, char *to) {
     FILE *fp;
     OpenFile *openFile;
     int amountRead, fileLength;
     char *buffer;
 
     // Open UNIX file
-    if ((fp = fopen(from, "r")) == NULL)
-    {
+    if ((fp = fopen(from, "r")) == NULL) {
         printf("Copy: couldn't open input file %s\n", from);
         return;
     }
@@ -52,8 +51,7 @@ void Copy(char *from, char *to)
 
     // Create a Nachos file of the same length
     DEBUG('f', "Copying file %s, size %d, to file %s\n", from, fileLength, to);
-    if (!fileSystem->Create(to, fileLength))
-    { // Create Nachos file
+    if (!fileSystem->Create(to, fileLength)) { // Create Nachos file
         printf("Copy: couldn't create output file %s\n", to);
         fclose(fp);
         return;
@@ -85,8 +83,8 @@ void Copy(char *from, char *to)
 //         "from" to the end of it.
 //----------------------------------------------------------------------
 
-void Append(char *from, char *to, int half)
-{
+void
+Append(char *from, char *to, int half) {
     FILE *fp;
     OpenFile *openFile;
     int amountRead, fileLength;
@@ -96,8 +94,7 @@ void Append(char *from, char *to, int half)
     int start;
 
     // Open UNIX file
-    if ((fp = fopen(from, "r")) == NULL)
-    {
+    if ((fp = fopen(from, "r")) == NULL) {
         printf("Copy: couldn't open input file %s\n", from);
         return;
     }
@@ -107,18 +104,15 @@ void Append(char *from, char *to, int half)
     fileLength = ftell(fp);
     fseek(fp, 0, 0);
 
-    if (fileLength == 0)
-    {
+    if (fileLength == 0) {
         printf("Append: nothing to append from file %s\n", from);
         fclose(fp);
         return;
     }
 
-    if ((openFile = fileSystem->Open(to)) == NULL)
-    {
+    if ((openFile = fileSystem->Open(to)) == NULL) {
         // file "to" does not exits, then create one
-        if (!fileSystem->Create(to, 0))
-        {
+        if (!fileSystem->Create(to, 0)) {
             printf("Append: couldn't create the file %s to append\n", to);
             fclose(fp);
             return;
@@ -135,15 +129,13 @@ void Append(char *from, char *to, int half)
 
     // Append the data in TransferSize chunks
     buffer = new char[TransferSize];
-    while ((amountRead = fread(buffer, sizeof(char), TransferSize, fp)) > 0)
-    {
+    while ((amountRead = fread(buffer, sizeof(char), TransferSize, fp)) > 0) {
         int result;
         //	printf("start value: %d,  amountRead %d, ", start, amountRead);
         //	result = openFile->WriteAt(buffer, amountRead, start);
         result = openFile->Write(buffer, amountRead);
         //	printf("result of write: %d\n", result);
-        if (result < 0)
-        {
+        if (result < 0) {
             printf("\nERROR!!!!!!\n");
             printf("Insufficient Disk Space, or File is Too Big!\n");
             printf("Writing Terminated.\n\n");
@@ -175,8 +167,8 @@ void Append(char *from, char *to, int half)
 //         "from" to the end of it.
 //----------------------------------------------------------------------
 
-void NAppend(char *from, char *to)
-{
+void
+NAppend(char *from, char *to) {
     OpenFile *openFileFrom;
     OpenFile *openFileTo;
     int amountRead, fileLength;
@@ -185,33 +177,28 @@ void NAppend(char *from, char *to)
     //  start position for appending
     int start;
 
-    if (!strncmp(from, to, FileNameMaxLen))
-    {
+    if (!strncmp(from, to, FileNameMaxLen)) {
         //  "from" should be the same as "to"
         printf("NAppend: should be different files\n");
         return;
     }
 
-    if ((openFileFrom = fileSystem->Open(from)) == NULL)
-    {
+    if ((openFileFrom = fileSystem->Open(from)) == NULL) {
         // file "from" does not exits, give up
         printf("NAppend:  file %s does not exist\n", from);
         return;
     }
 
     fileLength = openFileFrom->Length();
-    if (fileLength == 0)
-    {
+    if (fileLength == 0) {
         printf("NAppend: nothing to append from file %s\n", from);
         delete openFileFrom;
         return;
     }
 
-    if ((openFileTo = fileSystem->Open(to)) == NULL)
-    {
+    if ((openFileTo = fileSystem->Open(to)) == NULL) {
         // file "to" does not exits, then create one
-        if (!fileSystem->Create(to, 0))
-        {
+        if (!fileSystem->Create(to, 0)) {
             printf("Append: couldn't create the file %s to append\n", to);
             delete openFileFrom;
             return;
@@ -227,15 +214,13 @@ void NAppend(char *from, char *to)
     // Append the data in TransferSize chunks
     buffer = new char[TransferSize];
     openFileFrom->Seek(0);
-    while ((amountRead = openFileFrom->Read(buffer, TransferSize)) > 0)
-    {
+    while ((amountRead = openFileFrom->Read(buffer, TransferSize)) > 0) {
         int result;
         //	printf("start value: %d,  amountRead %d, ", start, amountRead);
         //	result = openFile->WriteAt(buffer, amountRead, start);
         result = openFileTo->Write(buffer, amountRead);
         //	printf("result of write: %d\n", result);
-        if (result < 0)
-        {
+        if (result < 0) {
             printf("\nERROR!!!!!!\n");
             printf("Insufficient Disk Space, or File is Too Big!\n");
             printf("Writing Terminated.\n\n");
@@ -261,14 +246,13 @@ void NAppend(char *from, char *to)
 // 	Print the contents of the Nachos file "name".
 //----------------------------------------------------------------------
 
-void Print(char *name)
-{
+void
+Print(char *name) {
     OpenFile *openFile;
     int i, amountRead;
     char *buffer;
 
-    if ((openFile = fileSystem->Open(name)) == NULL)
-    {
+    if ((openFile = fileSystem->Open(name)) == NULL) {
         printf("Print: unable to open file %s\n", name);
         return;
     }
@@ -301,29 +285,24 @@ void Print(char *name)
 #define FileSize ((int)(ContentSize * 5000))
 
 static void
-FileWrite()
-{
+FileWrite() {
     OpenFile *openFile;
     int i, numBytes;
 
-    printf("Sequential write of %d byte file, in %d byte chunks\n",
-           FileSize, ContentSize);
-    if (!fileSystem->Create(FileName, 0))
-    {
+    printf("Sequential write of %d byte file, in %d byte chunks\n", FileSize,
+           ContentSize);
+    if (!fileSystem->Create(FileName, 0)) {
         printf("Perf test: can't create %s\n", FileName);
         return;
     }
     openFile = fileSystem->Open(FileName);
-    if (openFile == NULL)
-    {
+    if (openFile == NULL) {
         printf("Perf test: unable to open %s\n", FileName);
         return;
     }
-    for (i = 0; i < FileSize; i += ContentSize)
-    {
+    for (i = 0; i < FileSize; i += ContentSize) {
         numBytes = openFile->Write(Contents, ContentSize);
-        if (numBytes < 10)
-        {
+        if (numBytes < 10) {
             printf("Perf test: unable to write %s\n", FileName);
             delete openFile;
             return;
@@ -333,26 +312,22 @@ FileWrite()
 }
 
 static void
-FileRead()
-{
+FileRead() {
     OpenFile *openFile;
     char *buffer = new char[ContentSize];
     int i, numBytes;
 
-    printf("Sequential read of %d byte file, in %d byte chunks\n",
-           FileSize, ContentSize);
+    printf("Sequential read of %d byte file, in %d byte chunks\n", FileSize,
+           ContentSize);
 
-    if ((openFile = fileSystem->Open(FileName)) == NULL)
-    {
+    if ((openFile = fileSystem->Open(FileName)) == NULL) {
         printf("Perf test: unable to open file %s\n", FileName);
         delete[] buffer;
         return;
     }
-    for (i = 0; i < FileSize; i += ContentSize)
-    {
+    for (i = 0; i < FileSize; i += ContentSize) {
         numBytes = openFile->Read(buffer, ContentSize);
-        if ((numBytes < 10) || strncmp(buffer, Contents, ContentSize))
-        {
+        if ((numBytes < 10) || strncmp(buffer, Contents, ContentSize)) {
             printf("Perf test: unable to read %s\n", FileName);
             delete openFile;
             delete[] buffer;
@@ -363,14 +338,13 @@ FileRead()
     delete openFile; // close file
 }
 
-void PerformanceTest()
-{
+void
+PerformanceTest() {
     printf("Starting file system performance test:\n");
     stats->Print();
     FileWrite();
     FileRead();
-    if (!fileSystem->Remove(FileName))
-    {
+    if (!fileSystem->Remove(FileName)) {
         printf("Perf test: unable to remove %s\n", FileName);
         return;
     }

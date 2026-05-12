@@ -11,8 +11,7 @@ static const int kMaxUserStringLength = 256;
 static const int kMaxProcesses = 64;
 static int nextPid = 1;
 
-struct ProcessInfo
-{
+struct ProcessInfo {
     int pid;
     int parentPid;
     int exitStatus;
@@ -27,8 +26,7 @@ static ProcessInfo *processTable[kMaxProcesses];
 static void StartUserProcess(_int arg);
 
 static void
-AdvanceProgramCounter()
-{
+AdvanceProgramCounter() {
     int pc = machine->ReadRegister(PCReg);
     machine->WriteRegister(PrevPCReg, pc);
     machine->WriteRegister(PCReg, pc + 4);
@@ -36,21 +34,17 @@ AdvanceProgramCounter()
 }
 
 static char *
-CopyUserString(int userAddr)
-{
+CopyUserString(int userAddr) {
     char *buffer = new char[kMaxUserStringLength];
     int ch = 0;
 
-    for (int i = 0; i < kMaxUserStringLength - 1; i++)
-    {
-        if (!machine->ReadMem(userAddr + i, 1, &ch))
-        {
+    for (int i = 0; i < kMaxUserStringLength - 1; i++) {
+        if (!machine->ReadMem(userAddr + i, 1, &ch)) {
             delete[] buffer;
             return NULL;
         }
         buffer[i] = (char)(ch & 0xff);
-        if (buffer[i] == '\0')
-        {
+        if (buffer[i] == '\0') {
             return buffer;
         }
     }
@@ -60,13 +54,10 @@ CopyUserString(int userAddr)
 }
 
 static void
-WriteToConsole(int userBufferAddr, int size)
-{
-    for (int i = 0; i < size; i++)
-    {
+WriteToConsole(int userBufferAddr, int size) {
+    for (int i = 0; i < size; i++) {
         int ch;
-        if (!machine->ReadMem(userBufferAddr + i, 1, &ch))
-        {
+        if (!machine->ReadMem(userBufferAddr + i, 1, &ch)) {
             return;
         }
         putchar(ch & 0xff);
@@ -75,19 +66,15 @@ WriteToConsole(int userBufferAddr, int size)
 }
 
 static int
-ReadFromConsole(int userBufferAddr, int size)
-{
+ReadFromConsole(int userBufferAddr, int size) {
     int count = 0;
 
-    for (; count < size; count++)
-    {
+    for (; count < size; count++) {
         int ch = getchar();
-        if (ch == EOF)
-        {
+        if (ch == EOF) {
             break;
         }
-        if (!machine->WriteMem(userBufferAddr + count, 1, ch & 0xff))
-        {
+        if (!machine->WriteMem(userBufferAddr + count, 1, ch & 0xff)) {
             break;
         }
     }
@@ -96,12 +83,9 @@ ReadFromConsole(int userBufferAddr, int size)
 }
 
 static ProcessInfo *
-FindProcess(int pid)
-{
-    for (int i = 0; i < kMaxProcesses; i++)
-    {
-        if (processTable[i] != NULL && processTable[i]->pid == pid)
-        {
+FindProcess(int pid) {
+    for (int i = 0; i < kMaxProcesses; i++) {
+        if (processTable[i] != NULL && processTable[i]->pid == pid) {
             return processTable[i];
         }
     }
@@ -109,12 +93,9 @@ FindProcess(int pid)
 }
 
 static void
-RemoveProcess(int pid)
-{
-    for (int i = 0; i < kMaxProcesses; i++)
-    {
-        if (processTable[i] != NULL && processTable[i]->pid == pid)
-        {
+RemoveProcess(int pid) {
+    for (int i = 0; i < kMaxProcesses; i++) {
+        if (processTable[i] != NULL && processTable[i]->pid == pid) {
             delete processTable[i]->exitSem;
             delete processTable[i];
             processTable[i] = NULL;
@@ -124,22 +105,18 @@ RemoveProcess(int pid)
 }
 
 static int
-CreateProcessEntry(Thread *thread, int parentPid)
-{
+CreateProcessEntry(Thread *thread, int parentPid) {
     IntStatus oldLevel = interrupt->SetLevel(IntOff);
     int slot = -1;
 
-    for (int i = 0; i < kMaxProcesses; i++)
-    {
-        if (processTable[i] == NULL)
-        {
+    for (int i = 0; i < kMaxProcesses; i++) {
+        if (processTable[i] == NULL) {
             slot = i;
             break;
         }
     }
 
-    if (slot < 0)
-    {
+    if (slot < 0) {
         (void)interrupt->SetLevel(oldLevel);
         return -1;
     }
@@ -163,14 +140,12 @@ CreateProcessEntry(Thread *thread, int parentPid)
 }
 
 static bool
-HasReadyThread()
-{
+HasReadyThread() {
     IntStatus oldLevel = interrupt->SetLevel(IntOff);
     Thread *nextThread = scheduler->FindNextToRun();
     bool hasReadyThread = (nextThread != NULL);
 
-    if (nextThread != NULL)
-    {
+    if (nextThread != NULL) {
         scheduler->ReadyToRun(nextThread);
     }
 
@@ -179,46 +154,38 @@ HasReadyThread()
 }
 
 static void
-DoExit(int status)
-{
+DoExit(int status) {
     AddrSpace *space = currentThread->space;
     ProcessInfo *info = FindProcess(currentThread->processId);
 
-    printf("Process %d exiting with status %d\n",
-           currentThread->processId, status);
+    printf("Process %d exiting with status %d\n", currentThread->processId,
+           status);
 
     currentThread->exitStatus = status;
-    if (info != NULL)
-    {
+    if (info != NULL) {
         info->exitStatus = status;
         info->exited = TRUE;
         info->exitSem->V();
     }
 
     currentThread->space = NULL;
-    if (space != NULL)
-    {
+    if (space != NULL) {
         delete space;
     }
 
-    if (HasReadyThread())
-    {
+    if (HasReadyThread()) {
         currentThread->Finish();
-    }
-    else
-    {
+    } else {
         interrupt->Halt();
     }
 }
 
 static void
-StartUserProcess(_int arg)
-{
+StartUserProcess(_int arg) {
     char *filename = (char *)arg;
     OpenFile *executable = fileSystem->Open(filename);
 
-    if (executable == NULL)
-    {
+    if (executable == NULL) {
         printf("Unable to open file %s\n", filename);
         delete[] filename;
         DoExit(-1);
@@ -239,31 +206,26 @@ StartUserProcess(_int arg)
 }
 
 static int
-DoExec(int userFileName)
-{
+DoExec(int userFileName) {
     char *filename = CopyUserString(userFileName);
     OpenFile *testOpen;
     unsigned int requiredPages;
 
-    if (filename == NULL || filename[0] == '\0')
-    {
-        if (filename != NULL)
-        {
+    if (filename == NULL || filename[0] == '\0') {
+        if (filename != NULL) {
             delete[] filename;
         }
         return -1;
     }
 
     testOpen = fileSystem->Open(filename);
-    if (testOpen == NULL)
-    {
+    if (testOpen == NULL) {
         delete[] filename;
         return -1;
     }
 
     requiredPages = AddrSpace::RequiredPages(testOpen);
-    if (requiredPages > AddrSpace::NumFreeFrames())
-    {
+    if (requiredPages > AddrSpace::NumFreeFrames()) {
         delete testOpen;
         delete[] filename;
         return -1;
@@ -272,8 +234,7 @@ DoExec(int userFileName)
 
     Thread *childThread = new Thread("user process");
     int pid = CreateProcessEntry(childThread, currentThread->processId);
-    if (pid < 0)
-    {
+    if (pid < 0) {
         delete childThread;
         delete[] filename;
         return -1;
@@ -284,18 +245,15 @@ DoExec(int userFileName)
 }
 
 static int
-DoJoin(int pid)
-{
+DoJoin(int pid) {
     ProcessInfo *info = FindProcess(pid);
     if (info == NULL || info->parentPid != currentThread->processId ||
-        info->joined)
-    {
+        info->joined) {
         return -1;
     }
 
     info->joined = TRUE;
-    if (!info->exited)
-    {
+    if (!info->exited) {
         info->exitSem->P();
     }
 
@@ -305,14 +263,11 @@ DoJoin(int pid)
 }
 
 void
-ExceptionHandler(ExceptionType which)
-{
+ExceptionHandler(ExceptionType which) {
     int type = machine->ReadRegister(2);
 
-    if (which == SyscallException)
-    {
-        switch (type)
-        {
+    if (which == SyscallException) {
+        switch (type) {
         case SC_Halt:
             DEBUG('a', "Shutdown, initiated by user program.\n");
             interrupt->Halt();
@@ -329,27 +284,21 @@ ExceptionHandler(ExceptionType which)
             AdvanceProgramCounter();
             return;
         case SC_Write:
-            if (machine->ReadRegister(6) == ConsoleOutput)
-            {
+            if (machine->ReadRegister(6) == ConsoleOutput) {
                 WriteToConsole(machine->ReadRegister(4),
                                machine->ReadRegister(5));
-            }
-            else
-            {
+            } else {
                 printf("Unsupported Write target %d\n",
                        machine->ReadRegister(6));
             }
             AdvanceProgramCounter();
             return;
         case SC_Read:
-            if (machine->ReadRegister(6) == ConsoleInput)
-            {
-                machine->WriteRegister(2,
-                                       ReadFromConsole(machine->ReadRegister(4),
-                                                       machine->ReadRegister(5)));
-            }
-            else
-            {
+            if (machine->ReadRegister(6) == ConsoleInput) {
+                machine->WriteRegister(
+                    2, ReadFromConsole(machine->ReadRegister(4),
+                                       machine->ReadRegister(5)));
+            } else {
                 machine->WriteRegister(2, -1);
             }
             AdvanceProgramCounter();
